@@ -1,0 +1,25 @@
+#!/bin/bash
+
+source lib
+
+function day() {
+    local d="day${1}"
+    local INPUT=${d}/input.txt
+
+    source ${d}/solve.sh
+
+    local -a functions=(
+        $(declare -F|awk "\$3~/adventofcode:d$1p/{print\$3}")
+    )
+
+    for fn in "${functions[@]}"; do
+        timer ${fn}
+    done
+}
+
+for i in {1..25}; do
+    if [ -e day$i/solve.sh ]; then
+        printf "0%080x\n" 0|tr 0 '#'
+        day $i
+    fi
+done

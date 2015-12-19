@@ -1,0 +1,20 @@
+#!/bin/bash
+
+INPUT='INPUT=$(dirname $BASH_SOURCE)/input.txt'
+
+function timer() {
+    echo "#. $1() -={"
+    t=$(date +%s.%N)
+    $1
+    d=$(bc -l <<< "$(date +%s.%N) - $t")
+    echo "#. time: $d"
+    echo "#. }=-"
+}
+
+function min() {
+    local -i n=$1
+    for i in ${@:1}; do
+        (( i > n )) || ((n=i))
+    done
+    echo $n
+}
