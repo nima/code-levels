@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source lib
 
 function day() {
     local d="day${1}"
     local INPUT=${d}/input.txt
+    [ ! -e "/tmp/${d}.txt" ] || INPUT="/tmp/${d}.txt"
 
     source ${d}/solve.sh
 
@@ -17,9 +18,13 @@ function day() {
     done
 }
 
-for i in {1..25}; do
+declare -a days=( {1..25} )
+[ $# -eq 0 ] || days=( $@ )
+
+for i in ${days[@]}; do
     if [ -e day$i/solve.sh ]; then
-        printf "0%080x\n" 0|tr 0 '#'
+        printf "#. Day %-2d" $i
+        printf " 0%080x\n" 0|tr 0 '#'
         day $i
     fi
 done

@@ -4,6 +4,7 @@ INPUT='INPUT=$(dirname $BASH_SOURCE)/input.txt'
 
 function timer() {
     echo "#. $1() -={"
+    echo "#. input: ${INPUT}"
     t=$(date +%s.%N)
     $1
     d=$(bc -l <<< "$(date +%s.%N) - $t")
