@@ -3,28 +3,36 @@
 source lib
 
 function day() {
+    local -i e=1
+
     local d="day${1}"
-    local INPUT=${d}/input.txt
-    [ ! -e "/tmp/${d}.txt" ] || INPUT="/tmp/${d}.txt"
-
-    source ${d}/solve.sh
-
-    local -a functions=(
-        $(declare -F|awk "\$3~/adventofcode:d$1p/{print\$3}")
-    )
-
-    for fn in "${functions[@]}"; do
-        timer ${fn}
-    done
-}
-
-declare -a days=( {1..25} )
-[ $# -eq 0 ] || days=( $@ )
-
-for i in ${days[@]}; do
-    if [ -e day$i/solve.sh ]; then
+    if [ -e $d/solve.sh ]; then
         printf "#. Day %-2d" $i
         printf " 0%080x\n" 0|tr 0 '#'
-        day $i
+
+        source ${d}/solve.sh
+
+        cd $d; {
+            local INPUT=$(pwd)/input.txt
+            [ ! -e "/tmp/${d}.txt" ] || INPUT="/tmp/${d}.txt"
+
+            local -a functions=(
+                $(declare -F|awk "\$3~/adventofcode:d$1p$2/{print\$3}")
+            )
+
+            for fn in "${functions[@]}"; do
+                timer ${fn}
+            done
+        }; cd ..
+
+        e=0
     fi
-done
+
+    return $e
+}
+
+case $# in
+    0) for i in {1..25}; do day $i; done ;;
+    1) day $1 ;;
+    2) day $1 $2 ;;
+esac
